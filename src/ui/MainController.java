@@ -10,9 +10,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.Point;
-import ui.graph.GraphHelper;
-import ui.graph.MouseMode;
-import ui.graph.TriangleGraphHelper;
+import ui.graph.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -68,8 +66,22 @@ public class MainController {
         tg.showOn(graphGenarationPane);
         graphSet.add(tg);
 
+        SquareGraphHelper sg = new SquareGraphHelper(300, 300, 50, 135);
+        sg.showOn(graphGenarationPane);
+        graphSet.add(sg);
+
+        RectangleGraphHelper rg = new RectangleGraphHelper(100, 300, 70, 50, 170);
+        rg.showOn(graphGenarationPane);
+        graphSet.add(rg);
+
+        CircleGraphHelper cg = new CircleGraphHelper(50, 300, 100);
+        cg.showOn(graphGenarationPane);
+        graphSet.add(cg);
+        System.out.println(cg.getInfo());
+
         drawButton.setUserData(MouseMode.DRAW);
         selectButton.setUserData(MouseMode.SELECT);
+        //模式选择
         toolGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle toggle, Toggle new_toggle) -> {
             if (new_toggle == null) {
                 mouseMode = MouseMode.NULL;

@@ -1,20 +1,15 @@
 package ui.graph;
 
 import config.Configurations;
-import javafx.event.EventHandler;
-import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeLineJoin;
 import model.Point;
 import model.graph.Triangle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -27,16 +22,12 @@ public class TriangleGraphHelper extends GraphHelper {
     private Line line2;
     private Line line3;
 
-    private List<Line> lines;
-
-
     public TriangleGraphHelper(Point p1, Point p2, Point p3) {
+        //绘制图形
         line1 = new Line();
         line2 = new Line();
         line3 = new Line();
-        lines = new ArrayList<>(Arrays.asList(line1, line2, line3));
-        setMouseMode(MouseMode.NULL);
-        setSelected(false);
+        shapes = new ArrayList<>(Arrays.asList(line1, line2, line3));
 
         line1.setStartX(p1.getX());
         line1.setStartY(p1.getY());
@@ -53,102 +44,37 @@ public class TriangleGraphHelper extends GraphHelper {
         line3.setEndX(p1.getX());
         line3.setEndY(p1.getY());
 
-        lines.forEach(l -> {
-            l.setStroke(Paint.valueOf("07c92a"));
-            l.setStrokeWidth(Configurations.getLineOriginalWidth());
-            l.setStrokeLineCap(StrokeLineCap.ROUND);
-            l.setStrokeLineJoin(StrokeLineJoin.ROUND);
-            l.setOnMouseEntered(new EnterEvent());
-            l.setOnMouseExited(new ExitEvent());
-            l.setOnMousePressed(new MouseDownEvent());
-            l.setOnMouseReleased(new MouseUpEvent());
-        });
+        //属性
+        shapes.forEach(l -> l.setStroke(Paint.valueOf(Configurations.getTriangleColor())));
+        initialize();
+        setMouseMode(MouseMode.NULL);
+        setSelected(false);
     }
 
     public TriangleGraphHelper(Triangle triangle) {
         this(triangle.getPoint1(), triangle.getPoint2(), triangle.getPoint3());
     }
 
-    /**
-     * 鼠标进入处理
-     */
-    private class EnterEvent implements EventHandler<MouseEvent> {
-        @Override
-        public void handle(MouseEvent event) {
-            if (getMouseMode() == MouseMode.SELECT) {
-                //如果在选择模式下可以选择
-                double width = Configurations.getLineEnterWidth();
-                lines.forEach(l -> l.setStrokeWidth(width));
-            }
-        }
-    }
 
     /**
-     * 鼠标退出处理
-     */
-    private class ExitEvent implements EventHandler<MouseEvent> {
-        @Override
-        public void handle(MouseEvent event) {
-            if (!isSelected()) {
-                //在未选中情况下变化
-                double width = Configurations.getLineOriginalWidth();
-                lines.forEach(l -> l.setStrokeWidth(width));
-            }
-        }
-    }
-
-    /**
-     * 鼠标落下处理
-     */
-    private class MouseDownEvent implements EventHandler<MouseEvent> {
-        @Override
-        public void handle(MouseEvent event) {
-            if (getMouseMode() == MouseMode.SELECT) {
-                double width = Configurations.getLineClickedWidth();
-                lines.forEach(l -> l.setStrokeWidth(width));
-            }
-        }
-    }
-
-    /**
-     * 鼠标抬起处理
-     */
-    private class MouseUpEvent implements EventHandler<MouseEvent> {
-        @Override
-        public void handle(MouseEvent event) {
-            if (getMouseMode() == MouseMode.SELECT) {
-                if (isSelected()) {
-                    unselect();
-                } else {
-                    setSelected(true);
-                    lines.forEach(l -> l.setStrokeWidth(Configurations.getLineSelectedWidth()));
-                }
-            }
-        }
-    }
-
-    @Override
-    public void showOn(Pane pane) {
-        lines.forEach(l -> pane.getChildren().add(l));
-    }
-
-    /**
-     * 设置已选中状态
+     * 获取图形信息
      *
-     * @param isSelected
+     * @return 图形信息字符串
      */
     @Override
-    //todo
-    public void setSelected(boolean isSelected) {
-        selected = isSelected;
+    public String getInfo() {
+        List<Double> lengths = getSideLength();
+        return "三角形:" + System.lineSeparator() + "边长1:" + String.format("%.2f", lengths.get(0))
+                + System.lineSeparator() + "边长2:" + String.format("%.2f", lengths.get(1))
+                + System.lineSeparator() + "边长3:" + String.format("%.2f", lengths.get(2));
     }
 
     /**
-     * 清空选择
+     * 计算三边边长
+     *
+     * @return 长度为3的数组, 3边边长
      */
-    @Override
-    public void unselect() {
-        setSelected(false);
-        lines.forEach(l -> l.setStrokeWidth(Configurations.getLineOriginalWidth()));
+    private List<Double> getSideLength() {
+        return shapes.stream().map(l -> Math.pow((Math.pow((((Line) l).getStartX() - ((Line) l).getEndX()), 2) + Math.pow((((Line) l).getStartY() - ((Line) l).getEndY()), 2)), 0.5)).collect(Collectors.toList());
     }
 }

@@ -1,7 +1,16 @@
 package ui.graph;
 
 
+import config.Configurations;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
+
+import java.util.List;
 
 /**
  * @author Shuaiyu Yao
@@ -14,27 +23,52 @@ public abstract class GraphHelper {
     //是否已选中
     private boolean selected;
 
+    List<Shape> shapes;
+
     /**
      * 现在在pane上
      *
      * @param pane 所显示的地方
      */
-    public abstract void showOn(Pane pane);
+    public void showOn(Pane pane) {
+        shapes.forEach(pane.getChildren()::add);
+    }
 
     /**
      * 设置鼠标模式
      */
     public void setMouseMode(MouseMode mouseMode) {
-        if (mouseMode != MouseMode.SELECT) {
-            unselect();
-        }
         this.mouseMode = mouseMode;
+        if (mouseMode != MouseMode.SELECT) {
+            setSelected(false);
+        }
     }
 
     /**
-     * 清空选择
+     * 图形上清空选择
      */
-    abstract void unselect();
+    protected void unselectOnShape() {
+        shapes.forEach(l -> l.setStrokeWidth(Configurations.getLineOriginalWidth()));
+    }
+
+    /**
+     * 图形上选择
+     */
+    protected void selectOnShape() {
+        shapes.forEach(l -> l.setStrokeWidth(Configurations.getLineSelectedWidth()));
+    }
+
+    protected void initialize() {
+        shapes.forEach(l -> {
+            l.setStrokeWidth(Configurations.getLineOriginalWidth());
+            l.setStrokeLineCap(StrokeLineCap.ROUND);
+            l.setStrokeLineJoin(StrokeLineJoin.ROUND);
+            l.setOnMouseEntered(new EnterEvent());
+            l.setOnMouseExited(new ExitEvent());
+            l.setOnMousePressed(new MouseDownEvent());
+            l.setOnMouseReleased(new MouseUpEvent());
+        });
+    }
 
     /**
      * 获取模式
@@ -48,9 +82,16 @@ public abstract class GraphHelper {
     /**
      * 设置已选中状态
      *
-     * @param isSelected
+     * @param isSelected boolean
      */
-    public abstract void setSelected(boolean isSelected);
+    public void setSelected(boolean isSelected) {
+        selected = isSelected;
+        if (!isSelected) {
+            unselectOnShape();
+        } else {
+            selectOnShape();
+        }
+    }
 
     /**
      * 查看是否选中
@@ -61,4 +102,64 @@ public abstract class GraphHelper {
         return selected;
     }
 
+    /**
+     * 获取图形信息
+     *
+     * @return 图形信息字符串
+     */
+    public abstract String getInfo();
+
+    /**
+     * 鼠标抬起处理
+     */
+    protected class MouseUpEvent implements EventHandler<MouseEvent> {
+        @Override
+        public void handle(MouseEvent event) {
+            if (getMouseMode() == MouseMode.SELECT) {
+                setSelected(!isSelected());
+            }
+        }
+    }
+
+    /**
+     * 鼠标进入处理
+     */
+    protected class EnterEvent implements EventHandler<MouseEvent> {
+        @Override
+        public void handle(MouseEvent event) {
+            if (getMouseMode() == MouseMode.SELECT) {
+                //如果在选择模式下可以选择
+                double width = Configurations.getLineEnterWidth();
+                shapes.forEach(l -> l.setStrokeWidth(width));
+            }
+        }
+    }
+
+
+    /**
+     * 鼠标退出处理
+     */
+    protected class ExitEvent implements EventHandler<MouseEvent> {
+        @Override
+        public void handle(MouseEvent event) {
+            if (!isSelected()) {
+                //在未选中情况下变化
+                double width = Configurations.getLineOriginalWidth();
+                shapes.forEach(l -> l.setStrokeWidth(width));
+            }
+        }
+    }
+
+    /**
+     * 鼠标落下处理
+     */
+    protected class MouseDownEvent implements EventHandler<MouseEvent> {
+        @Override
+        public void handle(MouseEvent event) {
+            if (getMouseMode() == MouseMode.SELECT) {
+                double width = Configurations.getLineClickedWidth();
+                shapes.forEach(l -> l.setStrokeWidth(width));
+            }
+        }
+    }
 }

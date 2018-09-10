@@ -19,6 +19,15 @@ public class Configurations {
     //线条点击宽度
     private static double lineClickedWidth = 5;
 
+    //三角形颜色
+    private static String triangleColor = "07c92a";
+    //正方形颜色
+    private static String squareColor = "da0000";
+    //长方形颜色
+    private static String rectangleColor = "008cd8";
+    //圆形颜色
+    private static String circlrColor = "ffbf00";
+
 
     public static void loadProperties() {
         try {
@@ -41,6 +50,18 @@ public class Configurations {
             tmp = properties.getProperty("line_clicked_width");
             lineClickedWidth = tmp == null ? lineClickedWidth : Double.parseDouble(tmp);
 
+            //加载triangle_color
+            tmp = properties.getProperty("triangle_color");
+            triangleColor = tmp == null ? triangleColor : tmp;
+            //加载square_color
+            tmp = properties.getProperty("square_color");
+            squareColor = tmp == null ? squareColor : tmp;
+            //加载rectangle_color
+            tmp = properties.getProperty("rectangle_color");
+            rectangleColor = tmp == null ? rectangleColor : tmp;
+            //加载circle_color
+            tmp = properties.getProperty("circle_color");
+            circlrColor = tmp == null ? circlrColor : tmp;
         } catch (Exception ignored) {
         }
     }
@@ -59,5 +80,21 @@ public class Configurations {
 
     public static double getLineClickedWidth() {
         return lineClickedWidth;
+    }
+
+    public static String getTriangleColor() {
+        return triangleColor;
+    }
+
+    public static String getSquareColor() {
+        return squareColor;
+    }
+
+    public static String getRectangleColor() {
+        return rectangleColor;
+    }
+
+    public static String getCirclrColor() {
+        return circlrColor;
     }
 }
