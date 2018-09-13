@@ -22,6 +22,7 @@ public class SquareGraphHelper extends GraphHelper {
     private Line line4;
 
     public SquareGraphHelper(int X, int Y, double r, double rotate) {
+        super();
         //绘制图形
         line1 = new Line();
         line2 = new Line();
@@ -52,11 +53,9 @@ public class SquareGraphHelper extends GraphHelper {
         line4.setEndY(Y - h1);
 
         //属性
-        shapes = new ArrayList<>(Arrays.asList(line1, line2, line3, line4));
-        shapes.forEach(l -> l.setStroke(Paint.valueOf(Configurations.getSquareColor())));
+        getShapes().addAll(Arrays.asList(line1, line2, line3, line4));
+        getShapes().forEach(l -> l.setStroke(Paint.valueOf(Configurations.getSquareColor())));
         initialize();
-        setMouseMode(MouseMode.NULL);
-        setSelected(false);
     }
 
     public SquareGraphHelper(Square square) {

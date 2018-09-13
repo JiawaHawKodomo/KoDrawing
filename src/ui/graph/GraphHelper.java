@@ -5,11 +5,11 @@ import config.Configurations;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +23,13 @@ public abstract class GraphHelper {
     //是否已选中
     private boolean selected;
 
-    List<Shape> shapes;
+    private List<Shape> shapes;
+
+    GraphHelper() {
+        shapes = new ArrayList<>();
+        mouseMode = MouseMode.NULL;
+        selected = false;
+    }
 
     /**
      * 现在在pane上
@@ -161,5 +167,9 @@ public abstract class GraphHelper {
                 shapes.forEach(l -> l.setStrokeWidth(width));
             }
         }
+    }
+
+    protected List<Shape> getShapes() {
+        return shapes;
     }
 }

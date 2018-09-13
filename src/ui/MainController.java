@@ -8,6 +8,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import model.Point;
 import ui.graph.*;
@@ -77,7 +78,16 @@ public class MainController {
         CircleGraphHelper cg = new CircleGraphHelper(50, 300, 100);
         cg.showOn(graphGenarationPane);
         graphSet.add(cg);
-        System.out.println(cg.getInfo());
+
+        SimpleChangeableGraphHelper scg = new SimpleChangeableGraphHelper();
+        Line line1 = new Line(10, 10, 40, 40);
+        graphGenarationPane.getChildren().add(line1);
+        Line line2 = new Line(40, 40, 80, 40);
+        graphGenarationPane.getChildren().add(line2);
+        scg.addShape(line1);
+        scg.addShape(line2);
+        graphSet.add(scg);
+        System.out.println(scg.getInfo());
 
         drawButton.setUserData(MouseMode.DRAW);
         selectButton.setUserData(MouseMode.SELECT);

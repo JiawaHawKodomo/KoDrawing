@@ -24,12 +24,13 @@ public class RectangleGraphHelper extends GraphHelper {
     private Line line4;
 
     public RectangleGraphHelper(int x, int y, double l, double w, double rotate) {
+        super();
         //图形
         line1 = new Line();
         line2 = new Line();
         line3 = new Line();
         line4 = new Line();
-        shapes = new ArrayList<>(Arrays.asList(line1, line2, line3, line4));
+        getShapes().addAll(Arrays.asList(line1, line2, line3, line4));
 
         double r = Math.pow((w * w + l * l), 0.5) / 2;
         double alpha = Math.atan(w / l);
@@ -59,10 +60,8 @@ public class RectangleGraphHelper extends GraphHelper {
         line4.setEndY(y - h1);
 
         //属性
-        shapes.forEach(l1 -> l1.setStroke(Paint.valueOf(Configurations.getRectangleColor())));
+        getShapes().forEach(l1 -> l1.setStroke(Paint.valueOf(Configurations.getRectangleColor())));
         initialize();
-        setMouseMode(MouseMode.NULL);
-        setSelected(false);
     }
 
     public RectangleGraphHelper(Rectangle rectangle) {

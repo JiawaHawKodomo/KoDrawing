@@ -23,11 +23,12 @@ public class TriangleGraphHelper extends GraphHelper {
     private Line line3;
 
     public TriangleGraphHelper(Point p1, Point p2, Point p3) {
+        super();
         //绘制图形
         line1 = new Line();
         line2 = new Line();
         line3 = new Line();
-        shapes = new ArrayList<>(Arrays.asList(line1, line2, line3));
+        getShapes().addAll(Arrays.asList(line1, line2, line3));
 
         line1.setStartX(p1.getX());
         line1.setStartY(p1.getY());
@@ -45,10 +46,8 @@ public class TriangleGraphHelper extends GraphHelper {
         line3.setEndY(p1.getY());
 
         //属性
-        shapes.forEach(l -> l.setStroke(Paint.valueOf(Configurations.getTriangleColor())));
+        getShapes().forEach(l -> l.setStroke(Paint.valueOf(Configurations.getTriangleColor())));
         initialize();
-        setMouseMode(MouseMode.NULL);
-        setSelected(false);
     }
 
     public TriangleGraphHelper(Triangle triangle) {
@@ -75,6 +74,6 @@ public class TriangleGraphHelper extends GraphHelper {
      * @return 长度为3的数组, 3边边长
      */
     private List<Double> getSideLength() {
-        return shapes.stream().map(l -> Math.pow((Math.pow((((Line) l).getStartX() - ((Line) l).getEndX()), 2) + Math.pow((((Line) l).getStartY() - ((Line) l).getEndY()), 2)), 0.5)).collect(Collectors.toList());
+        return getShapes().stream().map(l -> Math.pow((Math.pow((((Line) l).getStartX() - ((Line) l).getEndX()), 2) + Math.pow((((Line) l).getStartY() - ((Line) l).getEndY()), 2)), 0.5)).collect(Collectors.toList());
     }
 }
