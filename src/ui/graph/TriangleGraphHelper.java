@@ -5,6 +5,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import model.Point;
 import model.graph.Triangle;
+import ui.MainController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,8 +23,8 @@ public class TriangleGraphHelper extends GraphHelper {
     private Line line2;
     private Line line3;
 
-    public TriangleGraphHelper(Point p1, Point p2, Point p3) {
-        super();
+    public TriangleGraphHelper(MainController mainController, Point p1, Point p2, Point p3) {
+        super(mainController);
         //绘制图形
         line1 = new Line();
         line2 = new Line();
@@ -50,8 +51,8 @@ public class TriangleGraphHelper extends GraphHelper {
         initialize();
     }
 
-    public TriangleGraphHelper(Triangle triangle) {
-        this(triangle.getPoint1(), triangle.getPoint2(), triangle.getPoint3());
+    public TriangleGraphHelper(MainController mainController, Triangle triangle) {
+        this(mainController, triangle.getPoint1(), triangle.getPoint2(), triangle.getPoint3());
     }
 
 

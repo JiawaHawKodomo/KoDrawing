@@ -9,8 +9,4 @@ import java.io.Serializable;
  * @create 2018-09-07 15:08
  */
 public interface Graph extends Serializable {
-
-    int getId();
-
-    void setId(int id);
 }

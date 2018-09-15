@@ -42,11 +42,19 @@
                   </GridPane>
                   <HBox layoutX="14.0" layoutY="109.0" spacing="7.0" AnchorPane.rightAnchor="46.0" AnchorPane.topAnchor="50.0">
                      <children>
-                        <ToggleButton fx:id="drawButton" layoutX="14.0" layoutY="109.0" mnemonicParsing="false" onAction="#modeButtonEvent" prefHeight="50.0" prefWidth="50.0" />
-                        <ToggleButton fx:id="selectButton" layoutX="24.0" layoutY="119.0" mnemonicParsing="false" onAction="#modeButtonEvent" prefHeight="50.0" prefWidth="50.0" />
+                        <ToggleButton fx:id="drawButton" layoutX="14.0" layoutY="109.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" />
+                        <ToggleButton fx:id="selectButton" layoutX="24.0" layoutY="119.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" />
                      </children>
                   </HBox>
-                  <RadioButton layoutX="62.0" layoutY="180.0" mnemonicParsing="false" text="显示原图" />
+                  <VBox layoutX="58.0" layoutY="157.0" spacing="3.0">
+                     <children>
+                        <RadioButton fx:id="generatedGraphVisibleRadioButton" mnemonicParsing="false" onAction="#setGeneratedGraphVisible" selected="true" text="显示原图" />
+                        <RadioButton fx:id="realTraceVisibleRadioButton" layoutX="62.0" layoutY="180.0" mnemonicParsing="false" onAction="#setRealTraceVisible" selected="true" text="显示笔迹" />
+                     </children>
+                  </VBox>
+                  <Label fx:id="infoLabel" layoutX="62.0" layoutY="242.0" />
+                  <Button fx:id="correctButton" layoutX="46.0" layoutY="334.0" mnemonicParsing="false" onAction="#correctGraph" prefHeight="23.0" prefWidth="50.0" text="正确" visible="false" />
+                  <Button fx:id="deleteButton" layoutX="46.0" layoutY="334.0" mnemonicParsing="false" onAction="#deleteGraph" prefHeight="23.0" prefWidth="50.0" text="删除" visible="false" />
                </children>
             </AnchorPane>
         </items>

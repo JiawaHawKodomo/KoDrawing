@@ -15,18 +15,6 @@ public class Circle implements Graph{
     private Point center;
     private int radius;
 
-    private int id;
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Circle() {
     }
 

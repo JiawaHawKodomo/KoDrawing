@@ -1,6 +1,7 @@
 package ui.graph;
 
 import javafx.scene.shape.Shape;
+import ui.MainController;
 
 /**
  * @author Shuaiyu Yao
@@ -8,8 +9,8 @@ import javafx.scene.shape.Shape;
  */
 public class SimpleChangeableGraphHelper extends GraphHelper implements Changeable {
 
-    public SimpleChangeableGraphHelper() {
-        super();
+    public SimpleChangeableGraphHelper(MainController mainController) {
+        super(mainController);
     }
 
     /**
@@ -20,7 +21,7 @@ public class SimpleChangeableGraphHelper extends GraphHelper implements Changeab
     @Override
     public void addShape(Shape shape) {
         getShapes().add(shape);
-        initialize();
+        initializeImpl(shape);
     }
 
     /**

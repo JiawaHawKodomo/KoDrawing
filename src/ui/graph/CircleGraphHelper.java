@@ -4,9 +4,7 @@ package ui.graph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
 import model.graph.Circle;
-
-import java.util.ArrayList;
-import java.util.Collections;
+import ui.MainController;
 
 /**
  * 圆形
@@ -18,8 +16,8 @@ public class CircleGraphHelper extends GraphHelper {
 
     private javafx.scene.shape.Circle circle;
 
-    public CircleGraphHelper(double radius, int x, int y) {
-        super();
+    public CircleGraphHelper(MainController mainController, double radius, int x, int y) {
+        super(mainController);
         //绘图
         circle = new javafx.scene.shape.Circle();
         circle.setCenterX(x);
@@ -33,8 +31,8 @@ public class CircleGraphHelper extends GraphHelper {
         initialize();
     }
 
-    public CircleGraphHelper(Circle circle) {
-        this(circle.getRadius(), circle.getCenter().getX(), circle.getCenter().getY());
+    public CircleGraphHelper(MainController mainController, Circle circle) {
+        this(mainController, circle.getRadius(), circle.getCenter().getX(), circle.getCenter().getY());
     }
 
     /**

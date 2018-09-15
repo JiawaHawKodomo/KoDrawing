@@ -4,6 +4,7 @@ import config.Configurations;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import model.graph.Rectangle;
+import ui.MainController;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
@@ -23,8 +24,8 @@ public class RectangleGraphHelper extends GraphHelper {
     private Line line3;
     private Line line4;
 
-    public RectangleGraphHelper(int x, int y, double l, double w, double rotate) {
-        super();
+    public RectangleGraphHelper(MainController mainController, int x, int y, double l, double w, double rotate) {
+        super(mainController);
         //图形
         line1 = new Line();
         line2 = new Line();
@@ -64,8 +65,8 @@ public class RectangleGraphHelper extends GraphHelper {
         initialize();
     }
 
-    public RectangleGraphHelper(Rectangle rectangle) {
-        this(rectangle.getCenter().getX(), rectangle.getCenter().getY(), rectangle.getLength(), rectangle.getWidth(), rectangle.getRotate());
+    public RectangleGraphHelper(MainController mainController, Rectangle rectangle) {
+        this(mainController, rectangle.getCenter().getX(), rectangle.getCenter().getY(), rectangle.getLength(), rectangle.getWidth(), rectangle.getRotate());
     }
 
 

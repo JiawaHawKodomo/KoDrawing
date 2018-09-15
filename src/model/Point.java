@@ -16,6 +16,11 @@ public class Point implements Serializable {
     public Point() {
     }
 
+    public Point(int x, int y) {
+        X = x;
+        Y = y;
+    }
+
     public int getX() {
         return X;
     }

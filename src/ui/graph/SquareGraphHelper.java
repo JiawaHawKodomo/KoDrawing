@@ -4,6 +4,7 @@ import config.Configurations;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import model.graph.Square;
+import ui.MainController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +22,8 @@ public class SquareGraphHelper extends GraphHelper {
     private Line line3;
     private Line line4;
 
-    public SquareGraphHelper(int X, int Y, double r, double rotate) {
-        super();
+    public SquareGraphHelper(MainController mainController, int X, int Y, double r, double rotate) {
+        super(mainController);
         //绘制图形
         line1 = new Line();
         line2 = new Line();
@@ -58,8 +59,8 @@ public class SquareGraphHelper extends GraphHelper {
         initialize();
     }
 
-    public SquareGraphHelper(Square square) {
-        this(square.getCenter().getX(), square.getCenter().getY(), square.getSideLength(), square.getRotate());
+    public SquareGraphHelper(MainController mainController, Square square) {
+        this(mainController, square.getCenter().getX(), square.getCenter().getY(), square.getSideLength(), square.getRotate());
     }
 
     /**

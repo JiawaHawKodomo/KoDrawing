@@ -1,23 +1,21 @@
 package ui;
 
+import bl.TracingProcess;
+import config.Configurations;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import model.Point;
 import ui.graph.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class MainController {
-
 
     @FXML
     private ToggleButton selectButton;//选择模式按钮
@@ -35,13 +33,25 @@ public class MainController {
     private Canvas mainCanvas;//主画板
     @FXML
     private AnchorPane graphGenarationPane;//图形生成板
+    @FXML
+    private Label infoLabel;//信息标签
+    @FXML
+    private RadioButton generatedGraphVisibleRadioButton;
+    @FXML
+    private RadioButton realTraceVisibleRadioButton;
+    @FXML
+    private Button correctButton;
+    @FXML
+    private Button deleteButton;
 
     final ToggleGroup toolGroup = new ToggleGroup();
     private Stage mainStage;
+    private GraphicsContext gc;
 
     private MouseMode mouseMode = MouseMode.NULL;
-
-    private Set<GraphHelper> graphSet;
+    private Map<TracingProcess, GraphHelper> map;//键对形式存储笔画路径和模拟图像
+    //绘画相关
+    private TracingProcess currentTrace;
 
     @FXML
     private void initialize() {
@@ -49,10 +59,13 @@ public class MainController {
         drawButton.setStyle("-fx-background-image: url('resources/pic/painter.png')");
         selectButton.setToggleGroup(toolGroup);
         drawButton.setToggleGroup(toolGroup);
-        drawButton.setSelected(true);
-        graphSet = new HashSet<>();
+        map = new HashMap<>();
+
+        gc = mainCanvas.getGraphicsContext2D();
+        enterNewPaintingProcess();//新的图形绘制过程
 
 
+        /*test*/
         Point p1 = new Point();
         p1.setX(100);
         p1.setY(100);
@@ -63,34 +76,36 @@ public class MainController {
         p3.setX(50);
         p3.setY(50);
 
-        TriangleGraphHelper tg = new TriangleGraphHelper(p1, p2, p3);
+        TriangleGraphHelper tg = new TriangleGraphHelper(this, p1, p2, p3);
         tg.showOn(graphGenarationPane);
-        graphSet.add(tg);
+        map.put(new TracingProcess(), tg);
 
-        SquareGraphHelper sg = new SquareGraphHelper(300, 300, 50, 135);
+        SquareGraphHelper sg = new SquareGraphHelper(this, 300, 300, 50, 135);
         sg.showOn(graphGenarationPane);
-        graphSet.add(sg);
+        map.put(new TracingProcess(), sg);
 
-        RectangleGraphHelper rg = new RectangleGraphHelper(100, 300, 70, 50, 170);
+        RectangleGraphHelper rg = new RectangleGraphHelper(this, 100, 300, 70, 50, 170);
         rg.showOn(graphGenarationPane);
-        graphSet.add(rg);
+        map.put(new TracingProcess(), rg);
 
-        CircleGraphHelper cg = new CircleGraphHelper(50, 300, 100);
+        CircleGraphHelper cg = new CircleGraphHelper(this, 50, 300, 100);
         cg.showOn(graphGenarationPane);
-        graphSet.add(cg);
+        map.put(new TracingProcess(), cg);
 
-        SimpleChangeableGraphHelper scg = new SimpleChangeableGraphHelper();
+        SimpleChangeableGraphHelper scg = new SimpleChangeableGraphHelper(this);
         Line line1 = new Line(10, 10, 40, 40);
         graphGenarationPane.getChildren().add(line1);
         Line line2 = new Line(40, 40, 80, 40);
         graphGenarationPane.getChildren().add(line2);
         scg.addShape(line1);
         scg.addShape(line2);
-        graphSet.add(scg);
+        map.put(new TracingProcess(), scg);
         System.out.println(scg.getInfo());
+        /*test*/
 
         drawButton.setUserData(MouseMode.DRAW);
         selectButton.setUserData(MouseMode.SELECT);
+
         //模式选择
         toolGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle toggle, Toggle new_toggle) -> {
             if (new_toggle == null) {
@@ -98,17 +113,170 @@ public class MainController {
             } else {
                 MouseMode newMode = (MouseMode) toolGroup.getSelectedToggle().getUserData();
                 mouseMode = newMode;
-                graphSet.forEach(g -> g.setMouseMode(newMode));
+                map.forEach((k, v) -> v.setMouseMode(newMode));
+                switch (mouseMode) {//改变模式逻辑
+                    case SELECT:
+                        toSelectMode();
+                        break;
+                    case DRAW:
+                        toDrawMode();
+                        break;
+                }
             }
         });
+    }
+
+    @FXML
+    private void setGeneratedGraphVisible() {
+        map.forEach((k, v) -> v.setVisible(generatedGraphVisibleRadioButton.isSelected()));
+    }
+
+    @FXML
+    private void setRealTraceVisible() {
+        mainCanvas.setVisible(realTraceVisibleRadioButton.isSelected());
+    }
+
+    /**
+     * 删除某个图形
+     */
+    @FXML
+    private void deleteGraph() {
+        TracingProcess tracingProcess = searchForSelectedGraph();
+        if (tracingProcess != null) {
+            GraphHelper graph = map.get(tracingProcess);
+            map.remove(tracingProcess);//从map中移除
+            graph.delete();//删除模拟图形
+            clearTrace(tracingProcess.getTrace());//擦除笔迹
+
+            if (tracingProcess == currentTrace) {//当前正在画的图案
+                enterNewPaintingProcess();
+            }
+        }
+    }
+
+    /**
+     * 某个图形识别完毕
+     */
+    @FXML
+    private void correctGraph() {
+
+    }
+
+    /**
+     * 寻找选择中的图形
+     *
+     * @return 选择中的图形, TracingProcess, 如果没有选中的返回null
+     */
+    private TracingProcess searchForSelectedGraph() {
+        for (Map.Entry<TracingProcess, GraphHelper> e : map.entrySet()) {
+            if (e.getValue().isSelected()) {
+                return e.getKey();
+            }
+        }
+        return null;
     }
 
     public void setStage(Stage stage) {
         mainStage = stage;
     }
 
-    @FXML
-    private void modeButtonEvent() {
+    /**
+     * 清除选择
+     */
+    public void clearSelect() {
+        map.forEach((k, v) -> v.setSelected(false));
     }
 
+    public void setShapeInfo(String info) {
+        this.infoLabel.setText(info);
+    }
+
+    /**
+     * 进入新的绘画过程
+     */
+    private void enterNewPaintingProcess() {
+        currentTrace = new TracingProcess();
+    }
+
+    /**
+     * 画一个点
+     *
+     * @param point point
+     */
+    private void drawAPoint(Point point) {
+        gc.save();
+        gc.fillOval(point.getX(), point.getY(), Configurations.getThickness(), Configurations.getThickness());
+        gc.restore();
+    }
+
+    /**
+     * 擦除一条线
+     *
+     * @param list 点的列表
+     */
+    private void clearLinesOnCanvas(List<Point> list) {
+        list.forEach(p -> gc.clearRect(p.getX(), p.getY(), Configurations.getThickness(), Configurations.getThickness()));
+    }
+
+    /**
+     * 擦除一个图形轨迹
+     *
+     * @param list list
+     */
+    private void clearTrace(List<List<Point>> list) {
+        list.forEach(this::clearLinesOnCanvas);
+    }
+
+    /**
+     * 转为选择模式
+     */
+    private void toSelectMode() {
+        //删除画布鼠标事件
+        mainCanvas.setOnMousePressed(event -> {
+        });
+        mainCanvas.setOnMouseDragged(event -> {
+        });
+        mainCanvas.setOnMouseReleased(event -> {
+        });
+
+        //设置界面
+        correctButton.setVisible(false);
+        deleteButton.setVisible(true);
+    }
+
+    /**
+     * 转为绘画模式
+     */
+    private void toDrawMode() {
+        //建立画布事件
+        mainCanvas.setOnMousePressed(event -> {
+            //鼠标按下准备记录
+            currentTrace.createNewStroke();
+            Point point = new Point((int) event.getX(), (int) event.getY());
+            currentTrace.addPoint(point);
+            drawAPoint(point);
+        });
+        mainCanvas.setOnMouseDragged(event -> {
+            //鼠标拖动事件,画点
+            Point point = new Point((int) event.getX(), (int) event.getY());
+            currentTrace.addPoint(point);
+            drawAPoint(point);
+        });
+        mainCanvas.setOnMouseReleased(event -> {
+            //删除原有图像
+            GraphHelper oldGraph = map.get(currentTrace);
+            if (oldGraph != null) {
+                oldGraph.delete();
+            }
+
+            //鼠标抬起, 这一笔画结束, 计算
+            GraphHelper newGraph = currentTrace.analyze(this);
+            map.put(currentTrace, newGraph);
+            newGraph.showOn(graphGenarationPane);
+        });
+
+        //设置界面
+        correctButton.setVisible(true);
+        deleteButton.setVisible(false);
+    }
 }

@@ -16,17 +16,6 @@ public class Triangle implements Graph {
     private Point point2;
     private Point point3;
 
-    private int id;
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Triangle() {
     }

@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import ui.MainController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,13 @@ public abstract class GraphHelper {
 
     private List<Shape> shapes;
 
-    GraphHelper() {
+    private MainController mainController;
+
+    GraphHelper(MainController mainController) {
         shapes = new ArrayList<>();
         mouseMode = MouseMode.NULL;
         selected = false;
+        this.mainController = mainController;
     }
 
     /**
@@ -51,32 +55,6 @@ public abstract class GraphHelper {
     }
 
     /**
-     * 图形上清空选择
-     */
-    protected void unselectOnShape() {
-        shapes.forEach(l -> l.setStrokeWidth(Configurations.getLineOriginalWidth()));
-    }
-
-    /**
-     * 图形上选择
-     */
-    protected void selectOnShape() {
-        shapes.forEach(l -> l.setStrokeWidth(Configurations.getLineSelectedWidth()));
-    }
-
-    protected void initialize() {
-        shapes.forEach(l -> {
-            l.setStrokeWidth(Configurations.getLineOriginalWidth());
-            l.setStrokeLineCap(StrokeLineCap.ROUND);
-            l.setStrokeLineJoin(StrokeLineJoin.ROUND);
-            l.setOnMouseEntered(new EnterEvent());
-            l.setOnMouseExited(new ExitEvent());
-            l.setOnMousePressed(new MouseDownEvent());
-            l.setOnMouseReleased(new MouseUpEvent());
-        });
-    }
-
-    /**
      * 获取模式
      *
      * @return boolean
@@ -91,12 +69,15 @@ public abstract class GraphHelper {
      * @param isSelected boolean
      */
     public void setSelected(boolean isSelected) {
-        selected = isSelected;
         if (!isSelected) {
             unselectOnShape();
+            mainController.setShapeInfo("");
         } else {
+            mainController.clearSelect();
+            mainController.setShapeInfo(getInfo());
             selectOnShape();
         }
+        selected = isSelected;
     }
 
     /**
@@ -169,7 +150,47 @@ public abstract class GraphHelper {
         }
     }
 
-    protected List<Shape> getShapes() {
+    public void setVisible(boolean isVisible) {
+        shapes.forEach(s -> s.setVisible(isVisible));
+    }
+
+    public void delete() {
+        setSelected(false);
+        setMouseMode(MouseMode.NULL);
+        setVisible(false);
+    }
+
+    /**********************************************包内方法************************************************/
+
+    List<Shape> getShapes() {
         return shapes;
+    }
+
+    /**
+     * 图形上清空选择
+     */
+    private void unselectOnShape() {
+        shapes.forEach(l -> l.setStrokeWidth(Configurations.getLineOriginalWidth()));
+    }
+
+    /**
+     * 图形上选择
+     */
+    private void selectOnShape() {
+        shapes.forEach(l -> l.setStrokeWidth(Configurations.getLineSelectedWidth()));
+    }
+
+    void initialize() {
+        shapes.forEach(this::initializeImpl);
+    }
+
+    void initializeImpl(Shape l) {
+        l.setStrokeWidth(Configurations.getLineOriginalWidth());
+        l.setStrokeLineCap(StrokeLineCap.ROUND);
+        l.setStrokeLineJoin(StrokeLineJoin.ROUND);
+        l.setOnMouseEntered(new EnterEvent());
+        l.setOnMouseExited(new ExitEvent());
+        l.setOnMousePressed(new MouseDownEvent());
+        l.setOnMouseReleased(new MouseUpEvent());
     }
 }

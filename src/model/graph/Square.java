@@ -15,17 +15,6 @@ public class Square implements Graph{
     private Point center;//中心点
     private double sideLength;//边长
     private double rotate;//旋转角
-    private int id;
-
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
     public Square() {
     }
 

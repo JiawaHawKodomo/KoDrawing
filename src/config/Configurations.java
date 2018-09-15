@@ -28,6 +28,9 @@ public class Configurations {
     //圆形颜色
     private static String circlrColor = "ffbf00";
 
+    //画笔粗细
+    private static double thickness = 2;
+
 
     public static void loadProperties() {
         try {
@@ -62,6 +65,10 @@ public class Configurations {
             //加载circle_color
             tmp = properties.getProperty("circle_color");
             circlrColor = tmp == null ? circlrColor : tmp;
+
+            //加载thickness
+            tmp = properties.getProperty("thickness");
+            thickness = tmp == null ? thickness : Double.parseDouble(tmp);
         } catch (Exception ignored) {
         }
     }
@@ -96,5 +103,9 @@ public class Configurations {
 
     public static String getCirclrColor() {
         return circlrColor;
+    }
+
+    public static double getThickness() {
+        return thickness;
     }
 }
