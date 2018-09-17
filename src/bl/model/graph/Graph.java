@@ -1,4 +1,4 @@
-package model.graph;
+package bl.model.graph;
 
 import java.io.Serializable;
 

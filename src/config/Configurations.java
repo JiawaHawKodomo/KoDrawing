@@ -27,6 +27,8 @@ public class Configurations {
     private static String rectangleColor = "008cd8";
     //圆形颜色
     private static String circlrColor = "ffbf00";
+    //不规则图形颜色
+    private static String simpleColor = "8d8d8d";
 
     //画笔粗细
     private static double thickness = 2;
@@ -65,6 +67,9 @@ public class Configurations {
             //加载circle_color
             tmp = properties.getProperty("circle_color");
             circlrColor = tmp == null ? circlrColor : tmp;
+            //加载不规则图形颜色
+            tmp = properties.getProperty("simple_color");
+            simpleColor = tmp == null ? simpleColor : tmp;
 
             //加载thickness
             tmp = properties.getProperty("thickness");
@@ -107,5 +112,9 @@ public class Configurations {
 
     public static double getThickness() {
         return thickness;
+    }
+
+    public static String getSimpleColor() {
+        return simpleColor;
     }
 }

@@ -1,5 +1,7 @@
 package ui.graph;
 
+import config.Configurations;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import ui.MainController;
 
@@ -22,6 +24,7 @@ public class SimpleChangeableGraphHelper extends GraphHelper implements Changeab
     public void addShape(Shape shape) {
         getShapes().add(shape);
         initializeImpl(shape);
+        getShapes().forEach(l1 -> l1.setStroke(Paint.valueOf(Configurations.getSimpleColor())));
     }
 
     /**

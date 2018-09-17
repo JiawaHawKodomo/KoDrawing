@@ -3,7 +3,7 @@ package ui.graph;
 
 import config.Configurations;
 import javafx.scene.paint.Paint;
-import model.graph.Circle;
+import bl.model.graph.Circle;
 import ui.MainController;
 
 /**

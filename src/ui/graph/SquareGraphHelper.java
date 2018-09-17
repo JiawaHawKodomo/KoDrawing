@@ -3,10 +3,9 @@ package ui.graph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
-import model.graph.Square;
+import bl.model.graph.Square;
 import ui.MainController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**

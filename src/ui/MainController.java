@@ -1,6 +1,6 @@
 package ui;
 
-import bl.TracingProcess;
+import ui.graph.TracingProcess;
 import config.Configurations;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -10,7 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
-import model.Point;
+import bl.model.Point;
 import ui.graph.*;
 
 import java.util.*;
@@ -33,6 +33,8 @@ public class MainController {
     private Canvas mainCanvas;//主画板
     @FXML
     private AnchorPane graphGenarationPane;//图形生成板
+    @FXML
+    private AnchorPane leftPane;
     @FXML
     private Label infoLabel;//信息标签
     @FXML
@@ -159,7 +161,7 @@ public class MainController {
      */
     @FXML
     private void correctGraph() {
-
+        enterNewPaintingProcess();
     }
 
     /**
@@ -242,6 +244,12 @@ public class MainController {
         //设置界面
         correctButton.setVisible(false);
         deleteButton.setVisible(true);
+
+        //调整画板的位置
+        leftPane.getChildren().clear();
+        leftPane.getChildren().add(mainCanvas);
+        leftPane.getChildren().add(graphGenarationPane);
+
     }
 
     /**
@@ -273,10 +281,16 @@ public class MainController {
             GraphHelper newGraph = currentTrace.analyze(this);
             map.put(currentTrace, newGraph);
             newGraph.showOn(graphGenarationPane);
+
         });
 
         //设置界面
         correctButton.setVisible(true);
         deleteButton.setVisible(false);
+
+        //调整画板的位置
+        leftPane.getChildren().clear();
+        leftPane.getChildren().add(graphGenarationPane);
+        leftPane.getChildren().add(mainCanvas);
     }
 }

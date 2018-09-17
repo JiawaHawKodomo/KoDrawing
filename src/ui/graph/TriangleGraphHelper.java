@@ -3,11 +3,10 @@ package ui.graph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
-import model.Point;
-import model.graph.Triangle;
+import bl.model.Point;
+import bl.model.graph.Triangle;
 import ui.MainController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

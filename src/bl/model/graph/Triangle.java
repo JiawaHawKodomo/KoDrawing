@@ -1,6 +1,6 @@
-package model.graph;
+package bl.model.graph;
 
-import model.Point;
+import bl.model.Point;
 
 /**
  * 三角形
@@ -18,6 +18,12 @@ public class Triangle implements Graph {
 
 
     public Triangle() {
+    }
+
+    public Triangle(Point p1, Point p2, Point p3) {
+        point1 = p1;
+        point2 = p2;
+        point3 = p3;
     }
 
     public Point getPoint1() {

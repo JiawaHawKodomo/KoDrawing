@@ -1,4 +1,4 @@
-package model;
+package bl.model;
 
 import java.io.Serializable;
 import java.util.HashSet;

@@ -1,6 +1,6 @@
-package model.graph;
+package bl.model.graph;
 
-import model.Point;
+import bl.model.Point;
 
 /**
  * 长方形

@@ -1,6 +1,6 @@
-package model;
+package bl.model;
 
-import model.graph.Graph;
+import bl.model.graph.Graph;
 
 import java.io.Serializable;
 import java.util.HashSet;

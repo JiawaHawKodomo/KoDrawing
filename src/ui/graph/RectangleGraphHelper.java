@@ -3,11 +3,9 @@ package ui.graph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
-import model.graph.Rectangle;
+import bl.model.graph.Rectangle;
 import ui.MainController;
 
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 

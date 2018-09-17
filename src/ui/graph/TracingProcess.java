@@ -1,10 +1,9 @@
-package bl;
+package ui.graph;
 
+import bl.BLService;
 import javafx.scene.shape.Line;
-import model.Point;
+import bl.model.Point;
 import ui.MainController;
-import ui.graph.GraphHelper;
-import ui.graph.SimpleChangeableGraphHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ public class TracingProcess {
     private List<Point> currentStroke;
     private List<List<Point>> trace;
     private final String id;
+    private final BLService blService = BLService.getInstance();
 
     public TracingProcess() {
         trace = new ArrayList<>();
@@ -60,13 +60,27 @@ public class TracingProcess {
      * @return 分析后的模拟图形
      */
     public GraphHelper analyze(MainController mainController) {
-        SimpleChangeableGraphHelper result = new SimpleChangeableGraphHelper(mainController);
-        //todo
-        trace.stream().filter(list -> list != null && list.size() != 0).forEach(list -> {
-            Line line = new Line(list.get(0).getX(), list.get(0).getY(), list.get(list.size() - 1).getX(), list.get(list.size() - 1).getY());
-            result.addShape(line);
-        });
-        return result;
+//        SimpleChangeableGraphHelper result = new SimpleChangeableGraphHelper(mainController);
+//        //todo
+//        trace.stream().filter(list -> list != null && list.size() != 0).forEach(list -> {
+//            Line line = new Line(list.get(0).getX(), list.get(0).getY(), list.get(list.size() - 1).getX(), list.get(list.size() - 1).getY());
+//            result.addShape(line);
+//        });
+//        return result;
+
+        if (trace.size() < 3) {
+            SimpleChangeableGraphHelper result = new SimpleChangeableGraphHelper(mainController);
+            //todo
+            trace.stream().filter(list -> list != null && list.size() != 0).forEach(list -> {
+                Line line = new Line(list.get(0).getX(), list.get(0).getY(), list.get(list.size() - 1).getX(), list.get(list.size() - 1).getY());
+                result.addShape(line);
+            });
+            return result;
+        }
+
+        List<Point> list = new ArrayList<>();
+        trace.forEach(list::addAll);
+        return blService.analyze(list, mainController);
     }
 
     @Override
