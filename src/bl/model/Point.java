@@ -37,6 +37,10 @@ public class Point implements Serializable {
         Y = y;
     }
 
+    public double calculateDistanceToPoint(Point point) {
+        return Math.pow(Math.pow(Y - point.getY(), 2) + Math.pow(X - point.getX(), 2), 0.5);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

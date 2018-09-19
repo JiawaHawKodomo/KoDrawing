@@ -19,7 +19,6 @@ public class Rectangle implements Graph {
 
     public Rectangle() {
     }
-
     public int getLength() {
         return length;
     }

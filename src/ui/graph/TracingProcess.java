@@ -68,7 +68,7 @@ public class TracingProcess {
 //        });
 //        return result;
 
-        if (trace.size() < 3) {
+        if (trace.size() < 1) {
             SimpleChangeableGraphHelper result = new SimpleChangeableGraphHelper(mainController);
             //todo
             trace.stream().filter(list -> list != null && list.size() != 0).forEach(list -> {
@@ -78,9 +78,7 @@ public class TracingProcess {
             return result;
         }
 
-        List<Point> list = new ArrayList<>();
-        trace.forEach(list::addAll);
-        return blService.analyze(list, mainController);
+        return blService.analyze(trace, mainController);
     }
 
     @Override

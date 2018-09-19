@@ -68,41 +68,41 @@ public class MainController {
 
 
         /*test*/
-        Point p1 = new Point();
-        p1.setX(100);
-        p1.setY(100);
-        Point p2 = new Point();
-        p2.setX(100);
-        p2.setY(10);
-        Point p3 = new Point();
-        p3.setX(50);
-        p3.setY(50);
-
-        TriangleGraphHelper tg = new TriangleGraphHelper(this, p1, p2, p3);
-        tg.showOn(graphGenarationPane);
-        map.put(new TracingProcess(), tg);
-
-        SquareGraphHelper sg = new SquareGraphHelper(this, 300, 300, 50, 135);
-        sg.showOn(graphGenarationPane);
-        map.put(new TracingProcess(), sg);
-
-        RectangleGraphHelper rg = new RectangleGraphHelper(this, 100, 300, 70, 50, 170);
-        rg.showOn(graphGenarationPane);
-        map.put(new TracingProcess(), rg);
-
-        CircleGraphHelper cg = new CircleGraphHelper(this, 50, 300, 100);
-        cg.showOn(graphGenarationPane);
-        map.put(new TracingProcess(), cg);
-
-        SimpleChangeableGraphHelper scg = new SimpleChangeableGraphHelper(this);
-        Line line1 = new Line(10, 10, 40, 40);
-        graphGenarationPane.getChildren().add(line1);
-        Line line2 = new Line(40, 40, 80, 40);
-        graphGenarationPane.getChildren().add(line2);
-        scg.addShape(line1);
-        scg.addShape(line2);
-        map.put(new TracingProcess(), scg);
-        System.out.println(scg.getInfo());
+//        Point p1 = new Point();
+//        p1.setX(100);
+//        p1.setY(100);
+//        Point p2 = new Point();
+//        p2.setX(100);
+//        p2.setY(10);
+//        Point p3 = new Point();
+//        p3.setX(50);
+//        p3.setY(50);
+//
+//        TriangleGraphHelper tg = new TriangleGraphHelper(this, p1, p2, p3);
+//        tg.showOn(graphGenarationPane);
+//        map.put(new TracingProcess(), tg);
+//
+//        SquareGraphHelper sg = new SquareGraphHelper(this, 300, 300, 50, 135);
+//        sg.showOn(graphGenarationPane);
+//        map.put(new TracingProcess(), sg);
+//
+//        RectangleGraphHelper rg = new RectangleGraphHelper(this, 100, 300, 70, 50, 170);
+//        rg.showOn(graphGenarationPane);
+//        map.put(new TracingProcess(), rg);
+//
+//        CircleGraphHelper cg = new CircleGraphHelper(this, 50, 300, 100);
+//        cg.showOn(graphGenarationPane);
+//        map.put(new TracingProcess(), cg);
+//
+//        SimpleChangeableGraphHelper scg = new SimpleChangeableGraphHelper(this);
+//        Line line1 = new Line(10, 10, 40, 40);
+//        graphGenarationPane.getChildren().add(line1);
+//        Line line2 = new Line(40, 40, 80, 40);
+//        graphGenarationPane.getChildren().add(line2);
+//        scg.addShape(line1);
+//        scg.addShape(line2);
+//        map.put(new TracingProcess(), scg);
+//        System.out.println(scg.getInfo());
         /*test*/
 
         drawButton.setUserData(MouseMode.DRAW);
