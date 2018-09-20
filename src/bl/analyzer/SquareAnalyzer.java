@@ -15,13 +15,17 @@ import java.util.stream.Collectors;
  */
 public class SquareAnalyzer extends Analyzer {
 
-
     public SquareAnalyzer(List<List<Point>> trace) {
         super(trace);
     }
 
     @Override
     public void analyze() {
+        if (getTrace().isEmpty()) {
+            setMatchingRate(Double.MAX_VALUE);
+            return;
+        }
+
         List<SimulatedLine> resultLines;
         //首先判断trace的每个子列表是否是一条直线
         if (isAllTraceLine() && getTrace().size() >= 4) {//如果判断全是直线
@@ -67,14 +71,13 @@ public class SquareAnalyzer extends Analyzer {
         result.setRotate(rotate);
         setGraph(result);
 
-
         //计算匹配度
         setMatchingRate(getPackedUp().parallelStream()
                 .mapToDouble(p -> getResultLines().parallelStream()
                         .mapToDouble(l -> l.calculateDistanceToPoint(p))
                         .min().getAsDouble())
                 .average().getAsDouble());
-        System.out.println(getMatchingRate());
+        System.out.println("正方形:" + getMatchingRate());
     }
 
     @Override

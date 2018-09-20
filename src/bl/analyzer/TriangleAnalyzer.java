@@ -3,10 +3,7 @@ package bl.analyzer;
 import bl.model.Point;
 import bl.model.graph.Triangle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,11 +18,20 @@ public class TriangleAnalyzer extends Analyzer {
 
     @Override
     public void analyze() {
+        if (getTrace().isEmpty()) {
+            setMatchingRate(Double.MAX_VALUE);
+            return;
+        }
+
         List<SimulatedLine> resultLines;
+        List<Point> resultPoint = new ArrayList<>();
         if (isAllTraceLine() && getTrace().size() == 3) {
             resultLines = getTrace().parallelStream().map(list -> new SimulatedLine(list.get(0), list.get(list.size() - 1)))
                     .sorted((a, b) -> (int) (b.length - a.length))//排序, 从大到小
                     .collect(Collectors.toList());
+            resultPoint.add(resultLines.get(0).calculateIntersection(resultLines.get(1)));
+            resultPoint.add(resultLines.get(1).calculateIntersection(resultLines.get(2)));
+            resultPoint.add(resultLines.get(2).calculateIntersection(resultLines.get(0)));
         } else {
             //以5为单位选取
             List<Point> trace = pickPointsBy(5);
@@ -54,16 +60,21 @@ public class TriangleAnalyzer extends Analyzer {
             Point p1 = lines.get(0).calculateIntersection(lines.get(1));
             Point p2 = lines.get(1).calculateIntersection(lines.get(2));
             Point p3 = lines.get(2).calculateIntersection(lines.get(0));
+            if (p1 == null || p2 == null || p3 == null) {
+                setMatchingRate(Double.MAX_VALUE);//识别失败
+                return;
+            }
             resultLines = new ArrayList<>(Arrays.asList(
                     new SimulatedLine(p1, p2),
                     new SimulatedLine(p2, p3),
                     new SimulatedLine(p3, p1)
             ));
+            resultPoint.addAll(Arrays.asList(p1, p2, p3));
         }
 
 
         //设置结果
-        setGraph(new Triangle(resultLines.get(0).p1, resultLines.get(1).p1, resultLines.get(2).p1));
+        setGraph(new Triangle(resultPoint.get(0), resultPoint.get(1), resultPoint.get(2)));
 
 
         //计算匹配度
@@ -72,7 +83,11 @@ public class TriangleAnalyzer extends Analyzer {
                         .mapToDouble(l -> l.calculateDistanceToPoint(p))
                         .min().getAsDouble())
                 .average().getAsDouble());
-        System.out.println(getMatchingRate());
+        //如果有特别偏远的判定点, 则判定拟合失败
+        if (resultPoint.stream().mapToDouble(s -> getPackedUp().stream().mapToDouble(p -> p.calculateDistanceToPoint(s)).min().getAsDouble()).max().getAsDouble() > 100) {
+            setMatchingRate(Double.MAX_VALUE);
+        }
+        System.out.println("三角形" + getMatchingRate());
     }
 
     @Override

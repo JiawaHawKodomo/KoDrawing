@@ -19,11 +19,13 @@ public class TracingProcess {
 
     private List<Point> currentStroke;
     private List<List<Point>> trace;
+    private List<List<Point>> revoked;
     private final String id;
     private final BLService blService = BLService.getInstance();
 
     public TracingProcess() {
         trace = new ArrayList<>();
+        revoked = new ArrayList<>();
         id = UUID.randomUUID().toString();
     }
 
@@ -34,6 +36,8 @@ public class TracingProcess {
         List<Point> newStroke = new ArrayList<>();
         trace.add(newStroke);
         currentStroke = newStroke;
+        //清除撤销区
+        revoked.clear();
     }
 
     /**
@@ -55,30 +59,55 @@ public class TracingProcess {
     }
 
     /**
+     * 撤销上一步操作
+     */
+    public List<Point> undo() {
+        if (trace.size() != 0) {
+            List<Point> result = trace.get(trace.size() - 1);
+            System.out.println(result);
+            revoked.add(result);
+            trace.remove(trace.size() - 1);
+            return result;
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * 重做
+     */
+    public List<Point> redo() {
+        if (revoked.size() != 0) {
+            List<Point> result = revoked.get(revoked.size() - 1);
+            trace.add(result);
+            revoked.remove(result);
+            return result;
+        }
+        return new ArrayList<>();
+    }
+
+    /**
      * 返回分析后的图形
      *
      * @return 分析后的模拟图形
      */
     public GraphHelper analyze(MainController mainController) {
-//        SimpleChangeableGraphHelper result = new SimpleChangeableGraphHelper(mainController);
-//        //todo
-//        trace.stream().filter(list -> list != null && list.size() != 0).forEach(list -> {
-//            Line line = new Line(list.get(0).getX(), list.get(0).getY(), list.get(list.size() - 1).getX(), list.get(list.size() - 1).getY());
-//            result.addShape(line);
-//        });
-//        return result;
-
-        if (trace.size() < 1) {
-            SimpleChangeableGraphHelper result = new SimpleChangeableGraphHelper(mainController);
-            //todo
-            trace.stream().filter(list -> list != null && list.size() != 0).forEach(list -> {
-                Line line = new Line(list.get(0).getX(), list.get(0).getY(), list.get(list.size() - 1).getX(), list.get(list.size() - 1).getY());
-                result.addShape(line);
-            });
-            return result;
-        }
-
         return blService.analyze(trace, mainController);
+    }
+
+    public CircleGraphHelper analyzeToCirlce(MainController mainController) {
+        return blService.analyzeToCirlce(trace, mainController);
+    }
+
+    public TriangleGraphHelper analyzeToTriangle(MainController mainController) {
+        return blService.analyzeToTriangle(trace, mainController);
+    }
+
+    public RectangleGraphHelper analyzeToRectangle(MainController mainController) {
+        return blService.analyzeToRectangle(trace, mainController);
+    }
+
+    public SquareGraphHelper analyzeToSquare(MainController mainController) {
+        return blService.analyzeToSquare(trace, mainController);
     }
 
     @Override

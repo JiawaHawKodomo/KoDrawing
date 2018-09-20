@@ -1,5 +1,9 @@
 package ui;
 
+import javafx.event.EventType;
+import javafx.scene.Parent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import ui.graph.TracingProcess;
 import config.Configurations;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +21,8 @@ import java.util.*;
 
 public class MainController {
 
+    @FXML
+    private AnchorPane motherPane;
     @FXML
     private ToggleButton selectButton;//选择模式按钮
     @FXML
@@ -59,51 +65,16 @@ public class MainController {
     private void initialize() {
         selectButton.setStyle("-fx-background-image: url('resources/pic/selector.png')");
         drawButton.setStyle("-fx-background-image: url('resources/pic/painter.png')");
+        circleButton.setStyle("-fx-background-image: url('resources/pic/circle.png')");
+        triangleButton.setStyle("-fx-background-image: url('resources/pic/triangle.png')");
+        rectangleButton.setStyle("-fx-background-image: url('resources/pic/rectangle.png')");
+        squareButton.setStyle("-fx-background-image: url('resources/pic/square.png')");
         selectButton.setToggleGroup(toolGroup);
         drawButton.setToggleGroup(toolGroup);
         map = new HashMap<>();
 
         gc = mainCanvas.getGraphicsContext2D();
         enterNewPaintingProcess();//新的图形绘制过程
-
-
-        /*test*/
-//        Point p1 = new Point();
-//        p1.setX(100);
-//        p1.setY(100);
-//        Point p2 = new Point();
-//        p2.setX(100);
-//        p2.setY(10);
-//        Point p3 = new Point();
-//        p3.setX(50);
-//        p3.setY(50);
-//
-//        TriangleGraphHelper tg = new TriangleGraphHelper(this, p1, p2, p3);
-//        tg.showOn(graphGenarationPane);
-//        map.put(new TracingProcess(), tg);
-//
-//        SquareGraphHelper sg = new SquareGraphHelper(this, 300, 300, 50, 135);
-//        sg.showOn(graphGenarationPane);
-//        map.put(new TracingProcess(), sg);
-//
-//        RectangleGraphHelper rg = new RectangleGraphHelper(this, 100, 300, 70, 50, 170);
-//        rg.showOn(graphGenarationPane);
-//        map.put(new TracingProcess(), rg);
-//
-//        CircleGraphHelper cg = new CircleGraphHelper(this, 50, 300, 100);
-//        cg.showOn(graphGenarationPane);
-//        map.put(new TracingProcess(), cg);
-//
-//        SimpleChangeableGraphHelper scg = new SimpleChangeableGraphHelper(this);
-//        Line line1 = new Line(10, 10, 40, 40);
-//        graphGenarationPane.getChildren().add(line1);
-//        Line line2 = new Line(40, 40, 80, 40);
-//        graphGenarationPane.getChildren().add(line2);
-//        scg.addShape(line1);
-//        scg.addShape(line2);
-//        map.put(new TracingProcess(), scg);
-//        System.out.println(scg.getInfo());
-        /*test*/
 
         drawButton.setUserData(MouseMode.DRAW);
         selectButton.setUserData(MouseMode.SELECT);
@@ -164,6 +135,75 @@ public class MainController {
         enterNewPaintingProcess();
     }
 
+    @FXML
+    private void selectCircle() {
+        System.out.println("选择了圆形");
+        //删除原有图像
+        GraphHelper oldGraph = map.get(currentTrace);
+        if (oldGraph != null) {
+            oldGraph.delete();
+        }
+
+        //鼠标抬起, 这一笔画结束, 计算
+        GraphHelper newGraph = currentTrace.analyzeToCirlce(this);
+        if (newGraph != null) {
+            map.put(currentTrace, newGraph);
+            newGraph.showOn(graphGenarationPane);
+        }
+    }
+
+    @FXML
+    private void selectTriangle() {
+        System.out.println("选择了三角形");
+        //删除原有图像
+        GraphHelper oldGraph = map.get(currentTrace);
+        if (oldGraph != null) {
+            oldGraph.delete();
+        }
+
+        //鼠标抬起, 这一笔画结束, 计算
+        GraphHelper newGraph = currentTrace.analyzeToTriangle(this);
+        if (newGraph != null) {
+            map.put(currentTrace, newGraph);
+            newGraph.showOn(graphGenarationPane);
+        }
+    }
+
+    @FXML
+    private void selectRectangle() {
+        System.out.println("选择了长方形");
+        //删除原有图像
+        GraphHelper oldGraph = map.get(currentTrace);
+        if (oldGraph != null) {
+            oldGraph.delete();
+        }
+
+        //鼠标抬起, 这一笔画结束, 计算
+        GraphHelper newGraph = currentTrace.analyzeToRectangle(this);
+        if (newGraph != null) {
+            map.put(currentTrace, newGraph);
+            newGraph.showOn(graphGenarationPane);
+        }
+    }
+
+    @FXML
+    private void selectSquare() {
+        System.out.println("选择了正方形");
+        //删除原有图像
+        GraphHelper oldGraph = map.get(currentTrace);
+        if (oldGraph != null) {
+            oldGraph.delete();
+        }
+
+        //鼠标抬起, 这一笔画结束, 计算
+        GraphHelper newGraph = currentTrace.analyzeToSquare(this);
+        if (newGraph != null) {
+            map.put(currentTrace, newGraph);
+            newGraph.showOn(graphGenarationPane);
+        }
+
+    }
+
     /**
      * 寻找选择中的图形
      *
@@ -193,11 +233,22 @@ public class MainController {
         this.infoLabel.setText(info);
     }
 
+    public void undo() {
+        clearLinesOnCanvas(currentTrace.undo());
+        analyzeAndShow();
+    }
+
+    public void redo() {
+        currentTrace.redo().forEach(this::drawAPoint);
+        analyzeAndShow();
+    }
+
     /**
      * 进入新的绘画过程
      */
     private void enterNewPaintingProcess() {
         currentTrace = new TracingProcess();
+        infoLabel.setText("");
     }
 
     /**
@@ -227,6 +278,17 @@ public class MainController {
      */
     private void clearTrace(List<List<Point>> list) {
         list.forEach(this::clearLinesOnCanvas);
+    }
+
+    /**
+     * 改变选择的图形
+     */
+    public void changeSelectedGraph() {
+        for (Map.Entry<TracingProcess, GraphHelper> e : map.entrySet()) {
+            if (e.getValue().isSelected()) {
+                this.currentTrace = e.getKey();
+            }
+        }
     }
 
     /**
@@ -270,19 +332,7 @@ public class MainController {
             currentTrace.addPoint(point);
             drawAPoint(point);
         });
-        mainCanvas.setOnMouseReleased(event -> {
-            //删除原有图像
-            GraphHelper oldGraph = map.get(currentTrace);
-            if (oldGraph != null) {
-                oldGraph.delete();
-            }
-
-            //鼠标抬起, 这一笔画结束, 计算
-            GraphHelper newGraph = currentTrace.analyze(this);
-            map.put(currentTrace, newGraph);
-            newGraph.showOn(graphGenarationPane);
-
-        });
+        mainCanvas.setOnMouseReleased(event -> analyzeAndShow());
 
         //设置界面
         correctButton.setVisible(true);
@@ -292,5 +342,20 @@ public class MainController {
         leftPane.getChildren().clear();
         leftPane.getChildren().add(graphGenarationPane);
         leftPane.getChildren().add(mainCanvas);
+    }
+
+    public void analyzeAndShow() {
+        //删除原有图像
+        GraphHelper oldGraph = map.get(currentTrace);
+        if (oldGraph != null) {
+            oldGraph.delete();
+        }
+
+        //鼠标抬起, 这一笔画结束, 计算
+        GraphHelper newGraph = currentTrace.analyze(this);
+        if (newGraph != null) {
+            map.put(currentTrace, newGraph);
+            newGraph.showOn(graphGenarationPane);
+        }
     }
 }

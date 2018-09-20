@@ -3,6 +3,9 @@ package ui.graph;
 
 import config.Configurations;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
@@ -42,6 +45,7 @@ public abstract class GraphHelper {
      */
     public void showOn(Pane pane) {
         shapes.forEach(pane.getChildren()::add);
+        initialize();
     }
 
     /**
@@ -78,6 +82,7 @@ public abstract class GraphHelper {
             selectOnShape();
         }
         selected = isSelected;
+        mainController.changeSelectedGraph();
     }
 
     /**
@@ -150,6 +155,17 @@ public abstract class GraphHelper {
         }
     }
 
+    protected class KeyPressedEvent implements EventHandler<KeyEvent> {
+        @Override
+        public void handle(KeyEvent event) {
+            if (event.getCode() == KeyCode.Y && event.isControlDown()) {
+                mainController.redo();
+            } else if (event.getCode() == KeyCode.Z && event.isControlDown()) {
+                mainController.undo();
+            }
+        }
+    }
+
     public void setVisible(boolean isVisible) {
         shapes.forEach(s -> s.setVisible(isVisible));
     }
@@ -192,5 +208,6 @@ public abstract class GraphHelper {
         l.setOnMouseExited(new ExitEvent());
         l.setOnMousePressed(new MouseDownEvent());
         l.setOnMouseReleased(new MouseUpEvent());
+        l.setOnKeyPressed(new KeyPressedEvent());
     }
 }

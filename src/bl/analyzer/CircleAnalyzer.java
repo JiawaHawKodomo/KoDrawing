@@ -17,6 +17,11 @@ public class CircleAnalyzer extends Analyzer {
 
     @Override
     public void analyze() {
+        if (getTrace().isEmpty()) {
+            setMatchingRate(Double.MAX_VALUE);
+            return;
+        }
+
         List<Point> points = pickPointsBy(6);
 
         if (points.size() < 2) {
@@ -49,7 +54,7 @@ public class CircleAnalyzer extends Analyzer {
         //计算匹配度
         setMatchingRate(getPackedUp().parallelStream().mapToDouble(p -> Math.abs(p.calculateDistanceToPoint(center) - radius))
                 .average().getAsDouble());
-        System.out.println(getMatchingRate());
+        System.out.println("圆形:" + getMatchingRate());
     }
 
     @Override

@@ -22,6 +22,11 @@ public class RectangleAnalyzer extends Analyzer {
 
     @Override
     public void analyze() {
+        if (getTrace().isEmpty()) {
+            setMatchingRate(Double.MAX_VALUE);
+            return;
+        }
+
         List<SimulatedLine> resultLines;
         //首先判断trace的每个子列表是否是一条直线
         if (isAllTraceLine() && getTrace().size() >= 4) {//如果判断全是直线
@@ -70,13 +75,13 @@ public class RectangleAnalyzer extends Analyzer {
         result.setRotate(rotate);
         setGraph(result);
 
-
         //计算匹配度
         setMatchingRate(getPackedUp().parallelStream()
                 .mapToDouble(p -> getResultLines().parallelStream()
                         .mapToDouble(l -> l.calculateDistanceToPoint(p))
                         .min().getAsDouble())
                 .average().getAsDouble());
+        System.out.println("长方形:" + getMatchingRate());
     }
 
     @Override
