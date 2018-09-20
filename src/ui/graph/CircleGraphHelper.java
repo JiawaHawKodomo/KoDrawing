@@ -1,6 +1,7 @@
 package ui.graph;
 
 
+import bl.model.graph.Graph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
 import bl.model.graph.Circle;
@@ -16,6 +17,9 @@ public class CircleGraphHelper extends GraphHelper {
 
     private javafx.scene.shape.Circle circle;
 
+    private Circle graphCircle;
+
+    @Deprecated
     public CircleGraphHelper(MainController mainController, double radius, int x, int y) {
         super(mainController);
         //绘图
@@ -33,6 +37,7 @@ public class CircleGraphHelper extends GraphHelper {
 
     public CircleGraphHelper(MainController mainController, Circle circle) {
         this(mainController, circle.getRadius(), circle.getCenter().getX(), circle.getCenter().getY());
+        graphCircle = circle;
     }
 
     /**
@@ -44,5 +49,10 @@ public class CircleGraphHelper extends GraphHelper {
     public String getInfo() {
         return "圆形:" + System.lineSeparator()
                 + "半径:" + String.format("%.2f", circle.getRadius());
+    }
+
+    @Override
+    public Graph getGraph() {
+        return graphCircle;
     }
 }

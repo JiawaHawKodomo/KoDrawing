@@ -1,9 +1,9 @@
 package ui;
 
-import javafx.event.EventType;
-import javafx.scene.Parent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
+import bl.BLService;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.stage.FileChooser;
 import ui.graph.TracingProcess;
 import config.Configurations;
 import javafx.beans.value.ObservableValue;
@@ -12,17 +12,15 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import bl.model.Point;
 import ui.graph.*;
 
+import java.io.File;
 import java.util.*;
 
 public class MainController {
 
-    @FXML
-    private AnchorPane motherPane;
     @FXML
     private ToggleButton selectButton;//选择模式按钮
     @FXML
@@ -55,6 +53,7 @@ public class MainController {
     final ToggleGroup toolGroup = new ToggleGroup();
     private Stage mainStage;
     private GraphicsContext gc;
+    private BLService blService;
 
     private MouseMode mouseMode = MouseMode.NULL;
     private Map<TracingProcess, GraphHelper> map;//键对形式存储笔画路径和模拟图像
@@ -63,6 +62,7 @@ public class MainController {
 
     @FXML
     private void initialize() {
+        blService = BLService.getInstance();
         selectButton.setStyle("-fx-background-image: url('resources/pic/selector.png')");
         drawButton.setStyle("-fx-background-image: url('resources/pic/painter.png')");
         circleButton.setStyle("-fx-background-image: url('resources/pic/circle.png')");
@@ -78,7 +78,7 @@ public class MainController {
 
         drawButton.setUserData(MouseMode.DRAW);
         selectButton.setUserData(MouseMode.SELECT);
-
+        initializeCanvasAndGraphPane();
         //模式选择
         toolGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle toggle, Toggle new_toggle) -> {
             if (new_toggle == null) {
@@ -97,6 +97,12 @@ public class MainController {
                 }
             }
         });
+    }
+
+    private void initializeCanvasAndGraphPane() {
+        graphGenarationPane.getChildren().clear();
+        gc.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
+        enterNewPaintingProcess();
     }
 
     @FXML
@@ -149,6 +155,7 @@ public class MainController {
         if (newGraph != null) {
             map.put(currentTrace, newGraph);
             newGraph.showOn(graphGenarationPane);
+            changeTraceColor(newGraph);
         }
     }
 
@@ -166,6 +173,7 @@ public class MainController {
         if (newGraph != null) {
             map.put(currentTrace, newGraph);
             newGraph.showOn(graphGenarationPane);
+            changeTraceColor(newGraph);
         }
     }
 
@@ -183,6 +191,7 @@ public class MainController {
         if (newGraph != null) {
             map.put(currentTrace, newGraph);
             newGraph.showOn(graphGenarationPane);
+            changeTraceColor(newGraph);
         }
     }
 
@@ -200,6 +209,7 @@ public class MainController {
         if (newGraph != null) {
             map.put(currentTrace, newGraph);
             newGraph.showOn(graphGenarationPane);
+            changeTraceColor(newGraph);
         }
 
     }
@@ -344,7 +354,7 @@ public class MainController {
         leftPane.getChildren().add(mainCanvas);
     }
 
-    public void analyzeAndShow() {
+    private void analyzeAndShow() {
         //删除原有图像
         GraphHelper oldGraph = map.get(currentTrace);
         if (oldGraph != null) {
@@ -356,6 +366,42 @@ public class MainController {
         if (newGraph != null) {
             map.put(currentTrace, newGraph);
             newGraph.showOn(graphGenarationPane);
+            changeTraceColor(newGraph);
         }
     }
+
+    private void changeTraceColor(GraphHelper graphHelper) {
+        if (graphHelper instanceof CircleGraphHelper) {
+            gc.setFill(Paint.valueOf(Configurations.getCirclrColor()));
+        } else if (graphHelper instanceof TriangleGraphHelper) {
+            gc.setFill(Paint.valueOf(Configurations.getTriangleColor()));
+        } else if (graphHelper instanceof RectangleGraphHelper) {
+            gc.setFill(Paint.valueOf(Configurations.getRectangleColor()));
+        } else if (graphHelper instanceof SquareGraphHelper) {
+            gc.setFill(Paint.valueOf(Configurations.getSquareColor()));
+        }
+        currentTrace.getTrace().forEach(l -> l.forEach(this::drawAPoint));
+        gc.setFill(Color.BLACK);
+    }
+
+    /********保存读取部分*********/
+
+    @FXML
+    private void saveToFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("save to...");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("file", "*.kdm")
+        );
+        File file = fileChooser.showSaveDialog(mainStage);
+
+        blService.saveToFile(file, map);
+    }
+
+    @FXML
+    private void openFile() {
+        //todo
+        
+    }
+
 }

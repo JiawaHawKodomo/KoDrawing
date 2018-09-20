@@ -9,8 +9,10 @@ import bl.model.graph.Triangle;
 import ui.MainController;
 import ui.graph.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Shuaiyu Yao
@@ -129,4 +131,7 @@ public class BLService {
             return null;
     }
 
+    public void saveToFile(File file, Map<TracingProcess, GraphHelper> map) {
+
+    }
 }

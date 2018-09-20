@@ -1,5 +1,6 @@
 package ui.graph;
 
+import bl.model.graph.Graph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
@@ -22,6 +23,9 @@ public class TriangleGraphHelper extends GraphHelper {
     private Line line2;
     private Line line3;
 
+    private Triangle triangle;
+
+    @Deprecated
     public TriangleGraphHelper(MainController mainController, Point p1, Point p2, Point p3) {
         super(mainController);
         //绘制图形
@@ -52,6 +56,7 @@ public class TriangleGraphHelper extends GraphHelper {
 
     public TriangleGraphHelper(MainController mainController, Triangle triangle) {
         this(mainController, triangle.getPoint1(), triangle.getPoint2(), triangle.getPoint3());
+        this.triangle = triangle;
     }
 
 
@@ -66,6 +71,11 @@ public class TriangleGraphHelper extends GraphHelper {
         return "三角形:" + System.lineSeparator() + "边长1:" + String.format("%.2f", lengths.get(0))
                 + System.lineSeparator() + "边长2:" + String.format("%.2f", lengths.get(1))
                 + System.lineSeparator() + "边长3:" + String.format("%.2f", lengths.get(2));
+    }
+
+    @Override
+    public Graph getGraph() {
+        return triangle;
     }
 
     /**

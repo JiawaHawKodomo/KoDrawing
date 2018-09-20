@@ -1,6 +1,7 @@
 package ui.graph;
 
 
+import bl.model.graph.Graph;
 import config.Configurations;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -175,6 +176,8 @@ public abstract class GraphHelper {
         setMouseMode(MouseMode.NULL);
         setVisible(false);
     }
+
+    public abstract Graph getGraph();
 
     /**********************************************包内方法************************************************/
 

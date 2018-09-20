@@ -12,6 +12,8 @@ import java.util.List;
  */
 public class SimpleGraph implements Graph {
 
+    private static final long serialVersionUID = 1L;
+
     public SimpleGraph() {
         lines = new ArrayList<>();
     }

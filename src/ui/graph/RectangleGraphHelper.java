@@ -1,5 +1,6 @@
 package ui.graph;
 
+import bl.model.graph.Graph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
@@ -22,6 +23,9 @@ public class RectangleGraphHelper extends GraphHelper {
     private Line line3;
     private Line line4;
 
+    private Rectangle rectangle;
+
+    @Deprecated
     public RectangleGraphHelper(MainController mainController, int x, int y, double l, double w, double rotate) {
         super(mainController);
         //图形
@@ -65,6 +69,7 @@ public class RectangleGraphHelper extends GraphHelper {
 
     public RectangleGraphHelper(MainController mainController, Rectangle rectangle) {
         this(mainController, rectangle.getCenter().getX(), rectangle.getCenter().getY(), rectangle.getLength(), rectangle.getWidth(), rectangle.getRotate());
+        this.rectangle = rectangle;
     }
 
 
@@ -78,5 +83,10 @@ public class RectangleGraphHelper extends GraphHelper {
         return "长方形" + System.lineSeparator()
                 + "长:" + String.format("%.2f", Math.pow((Math.pow((line1.getStartX() - line1.getEndX()), 2) + Math.pow((line1.getStartY() - line1.getEndY()), 2)), 0.5)) + System.lineSeparator()
                 + "宽:" + String.format("%.2f", Math.pow((Math.pow((line2.getStartX() - line2.getEndX()), 2) + Math.pow((line2.getStartY() - line2.getEndY()), 2)), 0.5));
+    }
+
+    @Override
+    public Graph getGraph() {
+        return rectangle;
     }
 }

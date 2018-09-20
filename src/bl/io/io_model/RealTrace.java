@@ -1,7 +1,12 @@
-package bl.model;
+package bl.io.io_model;
+
+import bl.model.Point;
+import bl.model.graph.Line;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,17 +19,17 @@ public class RealTrace implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Set<Point> points;
+    private List<List<Point>> points;
 
     public RealTrace() {
-        points = new HashSet<>();
+        points = new ArrayList<>();
     }
 
-    public Set<Point> getPoints() {
+    public List<List<Point>> getPoints() {
         return points;
     }
 
-    public void setPoints(Set<Point> points) {
+    public void setPoints(List<List<Point>> points) {
         this.points = points;
     }
 }

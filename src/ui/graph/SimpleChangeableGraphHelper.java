@@ -1,5 +1,6 @@
 package ui.graph;
 
+import bl.model.graph.Graph;
 import bl.model.graph.SimpleGraph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
@@ -13,13 +14,12 @@ import ui.MainController;
  */
 public class SimpleChangeableGraphHelper extends GraphHelper implements Changeable {
 
-    public SimpleChangeableGraphHelper(MainController mainController) {
-        super(mainController);
-    }
+    private SimpleGraph simpleGraph;
 
     public SimpleChangeableGraphHelper(MainController mainController, SimpleGraph simpleGraph) {
         super(mainController);
         if (simpleGraph != null) {
+            this.simpleGraph = simpleGraph;
             simpleGraph.getLines().forEach(l -> addShape(new Line(l.getP1().getX(), l.getP1().getY(), l.getP2().getX(), l.getP2().getY())));
         }
     }
@@ -45,5 +45,10 @@ public class SimpleChangeableGraphHelper extends GraphHelper implements Changeab
     public String getInfo() {
         return "非规整图形:" + System.lineSeparator()
                 + "线数量:" + getShapes().size();
+    }
+
+    @Override
+    public Graph getGraph() {
+        return simpleGraph;
     }
 }

@@ -1,5 +1,6 @@
 package ui.graph;
 
+import bl.model.graph.Graph;
 import config.Configurations;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
@@ -21,6 +22,9 @@ public class SquareGraphHelper extends GraphHelper {
     private Line line3;
     private Line line4;
 
+    private Square square;
+
+    @Deprecated
     public SquareGraphHelper(MainController mainController, int X, int Y, double r, double rotate) {
         super(mainController);
         //绘制图形
@@ -60,6 +64,7 @@ public class SquareGraphHelper extends GraphHelper {
 
     public SquareGraphHelper(MainController mainController, Square square) {
         this(mainController, square.getCenter().getX(), square.getCenter().getY(), square.getSideLength(), square.getRotate());
+        this.square = square;
     }
 
     /**
@@ -71,5 +76,10 @@ public class SquareGraphHelper extends GraphHelper {
     public String getInfo() {
         return "正方形:" + System.lineSeparator()
                 + "边长:" + String.format("%.2f", Math.pow((Math.pow((line1.getStartX() - line1.getEndX()), 2) + Math.pow((line1.getStartY() - line1.getEndY()), 2)), 0.5));
+    }
+
+    @Override
+    public Graph getGraph() {
+        return square;
     }
 }

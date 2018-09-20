@@ -2,11 +2,15 @@ package bl.model.graph;
 
 import bl.model.Point;
 
+import java.io.Serializable;
+
 /**
  * @author Shuaiyu Yao
  * @create 2018-09-20 12:14
  */
-public class Line {
+public class Line implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public Line() {
     }
