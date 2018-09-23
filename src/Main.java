@@ -30,6 +30,9 @@ public class Main extends Application {
             // scene
             Scene scene = new Scene(loader.load());
             primaryStage.setScene(scene);
+            scene.getStylesheets().add(
+                    MainController.class.getResource("MainStyle.css")
+                            .toExternalForm());
 
             // controller
             MainController controller = loader.getController();

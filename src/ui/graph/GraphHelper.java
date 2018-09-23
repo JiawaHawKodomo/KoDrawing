@@ -39,6 +39,10 @@ public abstract class GraphHelper {
         this.mainController = mainController;
     }
 
+    GraphHelper(MainController mainController, Graph graph) {
+        this(mainController);
+    }
+
     /**
      * 现在在pane上
      *

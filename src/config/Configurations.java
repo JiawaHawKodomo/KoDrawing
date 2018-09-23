@@ -33,6 +33,9 @@ public class Configurations {
     //画笔粗细
     private static double thickness = 2;
 
+    //持久化文件后缀名
+    private static String fileSuffix = "kdm";
+
 
     public static void loadProperties() {
         try {
@@ -74,6 +77,10 @@ public class Configurations {
             //加载thickness
             tmp = properties.getProperty("thickness");
             thickness = tmp == null ? thickness : Double.parseDouble(tmp);
+
+            //加载file_suffix
+            tmp = properties.getProperty("file_suffix");
+            fileSuffix = tmp == null ? fileSuffix : tmp;
         } catch (Exception ignored) {
         }
     }
@@ -116,5 +123,9 @@ public class Configurations {
 
     public static String getSimpleColor() {
         return simpleColor;
+    }
+
+    public static String getFileSuffix() {
+        return fileSuffix;
     }
 }

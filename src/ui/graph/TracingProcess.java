@@ -85,6 +85,10 @@ public class TracingProcess {
         return new ArrayList<>();
     }
 
+    public void setTrace(List<List<Point>> trace) {
+        this.trace = trace;
+    }
+
     /**
      * 返回分析后的图形
      *

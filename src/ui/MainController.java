@@ -17,6 +17,7 @@ import bl.model.Point;
 import ui.graph.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class MainController {
@@ -25,14 +26,6 @@ public class MainController {
     private ToggleButton selectButton;//选择模式按钮
     @FXML
     private ToggleButton drawButton;//绘画模式按钮
-    @FXML
-    private Button triangleButton;//标三角形
-    @FXML
-    private Button rectangleButton;//标长方形
-    @FXML
-    private Button squareButton;//标正方形
-    @FXML
-    private Button circleButton;//标圆形
     @FXML
     private Canvas mainCanvas;//主画板
     @FXML
@@ -50,7 +43,7 @@ public class MainController {
     @FXML
     private Button deleteButton;
 
-    final ToggleGroup toolGroup = new ToggleGroup();
+    private final ToggleGroup toolGroup = new ToggleGroup();
     private Stage mainStage;
     private GraphicsContext gc;
     private BLService blService;
@@ -63,12 +56,6 @@ public class MainController {
     @FXML
     private void initialize() {
         blService = BLService.getInstance();
-        selectButton.setStyle("-fx-background-image: url('resources/pic/selector.png')");
-        drawButton.setStyle("-fx-background-image: url('resources/pic/painter.png')");
-        circleButton.setStyle("-fx-background-image: url('resources/pic/circle.png')");
-        triangleButton.setStyle("-fx-background-image: url('resources/pic/triangle.png')");
-        rectangleButton.setStyle("-fx-background-image: url('resources/pic/rectangle.png')");
-        squareButton.setStyle("-fx-background-image: url('resources/pic/square.png')");
         selectButton.setToggleGroup(toolGroup);
         drawButton.setToggleGroup(toolGroup);
         map = new HashMap<>();
@@ -97,6 +84,8 @@ public class MainController {
                 }
             }
         });
+        mainCanvas.widthProperty().bind(graphGenarationPane.widthProperty());
+        mainCanvas.heightProperty().bind(graphGenarationPane.heightProperty());
     }
 
     private void initializeCanvasAndGraphPane() {
@@ -153,9 +142,7 @@ public class MainController {
         //鼠标抬起, 这一笔画结束, 计算
         GraphHelper newGraph = currentTrace.analyzeToCirlce(this);
         if (newGraph != null) {
-            map.put(currentTrace, newGraph);
-            newGraph.showOn(graphGenarationPane);
-            changeTraceColor(newGraph);
+            addNewGraphHelper(newGraph, currentTrace);
         }
     }
 
@@ -171,9 +158,7 @@ public class MainController {
         //鼠标抬起, 这一笔画结束, 计算
         GraphHelper newGraph = currentTrace.analyzeToTriangle(this);
         if (newGraph != null) {
-            map.put(currentTrace, newGraph);
-            newGraph.showOn(graphGenarationPane);
-            changeTraceColor(newGraph);
+            addNewGraphHelper(newGraph, currentTrace);
         }
     }
 
@@ -189,9 +174,7 @@ public class MainController {
         //鼠标抬起, 这一笔画结束, 计算
         GraphHelper newGraph = currentTrace.analyzeToRectangle(this);
         if (newGraph != null) {
-            map.put(currentTrace, newGraph);
-            newGraph.showOn(graphGenarationPane);
-            changeTraceColor(newGraph);
+            addNewGraphHelper(newGraph, currentTrace);
         }
     }
 
@@ -207,11 +190,15 @@ public class MainController {
         //鼠标抬起, 这一笔画结束, 计算
         GraphHelper newGraph = currentTrace.analyzeToSquare(this);
         if (newGraph != null) {
-            map.put(currentTrace, newGraph);
-            newGraph.showOn(graphGenarationPane);
-            changeTraceColor(newGraph);
+            addNewGraphHelper(newGraph, currentTrace);
         }
+    }
 
+    private void addNewGraphHelper(GraphHelper graphHelper, TracingProcess tracingProcess) {
+        map.put(tracingProcess, graphHelper);
+        graphHelper.showOn(graphGenarationPane);
+        changeTraceColor(graphHelper);
+        graphHelper.setSelected(true);
     }
 
     /**
@@ -312,11 +299,6 @@ public class MainController {
         });
         mainCanvas.setOnMouseReleased(event -> {
         });
-
-        //设置界面
-        correctButton.setVisible(false);
-        deleteButton.setVisible(true);
-
         //调整画板的位置
         leftPane.getChildren().clear();
         leftPane.getChildren().add(mainCanvas);
@@ -344,10 +326,6 @@ public class MainController {
         });
         mainCanvas.setOnMouseReleased(event -> analyzeAndShow());
 
-        //设置界面
-        correctButton.setVisible(true);
-        deleteButton.setVisible(false);
-
         //调整画板的位置
         leftPane.getChildren().clear();
         leftPane.getChildren().add(graphGenarationPane);
@@ -364,9 +342,7 @@ public class MainController {
         //鼠标抬起, 这一笔画结束, 计算
         GraphHelper newGraph = currentTrace.analyze(this);
         if (newGraph != null) {
-            map.put(currentTrace, newGraph);
-            newGraph.showOn(graphGenarationPane);
-            changeTraceColor(newGraph);
+            addNewGraphHelper(newGraph, currentTrace);
         }
     }
 
@@ -380,7 +356,8 @@ public class MainController {
         } else if (graphHelper instanceof SquareGraphHelper) {
             gc.setFill(Paint.valueOf(Configurations.getSquareColor()));
         }
-        currentTrace.getTrace().forEach(l -> l.forEach(this::drawAPoint));
+
+        map.entrySet().stream().filter(e -> e.getValue() == graphHelper).forEach(e -> e.getKey().getTrace().forEach(l -> l.forEach(this::drawAPoint)));
         gc.setFill(Color.BLACK);
     }
 
@@ -391,7 +368,7 @@ public class MainController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("save to...");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("file", "*.kdm")
+                new FileChooser.ExtensionFilter("file", "*." + Configurations.getFileSuffix())
         );
         File file = fileChooser.showSaveDialog(mainStage);
 
@@ -400,8 +377,41 @@ public class MainController {
 
     @FXML
     private void openFile() {
-        //todo
-        
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("open to...");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("file", "*." + Configurations.getFileSuffix())
+        );
+        File file = fileChooser.showOpenDialog(mainStage);
+        if (file != null) {
+            try {
+                Map<TracingProcess, GraphHelper> newMap = blService.readFile(this, file);
+                initializeCanvasAndGraphPane();
+                initialize();
+                map = newMap;
+
+
+                redraw();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("打开文件失败");
+                alert.setHeaderText("请选择正确的文件, 具体错误:");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            }
+        }
     }
 
+    /**
+     * 重画, 根据现有内容重置画板
+     */
+    private void redraw() {
+        gc.clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
+        map.keySet().forEach(k -> k.getTrace().forEach(l -> l.forEach(this::drawAPoint)));
+        map.values().forEach(v -> {
+            v.showOn(graphGenarationPane);
+            changeTraceColor(v);
+        });
+    }
 }

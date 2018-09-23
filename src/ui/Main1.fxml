@@ -20,7 +20,7 @@
                   <Canvas fx:id="mainCanvas" focusTraversable="true" height="483.0" layoutX="98.0" layoutY="14.0" width="486.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="192.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane fx:id="rightPane" minHeight="0.0" minWidth="192.0" prefHeight="160.0" prefWidth="100.0">
                <children>
                   <GridPane layoutX="43.0" layoutY="344.0" prefHeight="100.0" prefWidth="100.0" AnchorPane.bottomAnchor="26.0" AnchorPane.rightAnchor="46.0">
                     <columnConstraints>
@@ -49,16 +49,34 @@
                   </HBox>
                   <VBox layoutX="58.0" layoutY="157.0" spacing="3.0">
                      <children>
-                        <RadioButton fx:id="generatedGraphVisibleRadioButton" mnemonicParsing="false" onAction="#setGeneratedGraphVisible" selected="true" text="显示原图" />
+                        <RadioButton fx:id="generatedGraphVisibleRadioButton" mnemonicParsing="false" onAction="#setGeneratedGraphVisible" selected="true" text="显示拟合" />
                         <RadioButton fx:id="realTraceVisibleRadioButton" layoutX="62.0" layoutY="180.0" mnemonicParsing="false" onAction="#setRealTraceVisible" selected="true" text="显示笔迹" />
                      </children>
                   </VBox>
                   <Label fx:id="infoLabel" layoutX="62.0" layoutY="242.0" />
-                  <Button fx:id="correctButton" layoutX="46.0" layoutY="334.0" mnemonicParsing="false" onAction="#correctGraph" prefHeight="23.0" prefWidth="50.0" text="正确" visible="false" />
-                  <Button fx:id="deleteButton" layoutX="46.0" layoutY="334.0" mnemonicParsing="false" onAction="#deleteGraph" prefHeight="23.0" prefWidth="50.0" text="删除" visible="false" />
+                  <Button fx:id="correctButton" layoutX="46.0" layoutY="323.0" mnemonicParsing="false" onAction="#correctGraph" prefHeight="23.0" prefWidth="50.0" text="正确" />
+                  <Button fx:id="deleteButton" layoutX="96.0" layoutY="323.0" mnemonicParsing="false" onAction="#deleteGraph" prefHeight="23.0" prefWidth="50.0" text="删除" />
                </children>
             </AnchorPane>
         </items>
       </SplitPane>
+      <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="文件">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#openFile" text="打开..." />
+                  <MenuItem mnemonicParsing="false" onAction="#saveToFile" text="保存到..." />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="标记">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#selectTriangle" text="三角形" />
+              <MenuItem mnemonicParsing="false" onAction="#selectRectangle" text="长方形" />
+                  <MenuItem mnemonicParsing="false" onAction="#selectSquare" text="正方形" />
+                  <MenuItem mnemonicParsing="false" onAction="#selectCircle" text="圆形" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
    </children>
 </AnchorPane>

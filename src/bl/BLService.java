@@ -1,6 +1,8 @@
 package bl;
 
 import bl.analyzer.*;
+import bl.io.IOHelper;
+import bl.io.io_model.PictureScene;
 import bl.model.Point;
 import bl.model.graph.Circle;
 import bl.model.graph.Rectangle;
@@ -9,7 +11,7 @@ import bl.model.graph.Triangle;
 import ui.MainController;
 import ui.graph.*;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +22,10 @@ import java.util.Map;
  */
 public class BLService {
 
+    private IOHelper ioHelper;
+
     private BLService() {
+        ioHelper = IOHelper.getInstance();
     }
 
     private static final BLService blService = new BLService();
@@ -131,7 +136,35 @@ public class BLService {
             return null;
     }
 
+    /**
+     * 保存对象到文件
+     *
+     * @param file file
+     * @param map  要存的类
+     */
     public void saveToFile(File file, Map<TracingProcess, GraphHelper> map) {
+        PictureScene pictureScene = ioHelper.swapToSerilizationClass(map);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(pictureScene);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * 读取文件
+     *
+     * @param mainController mainController
+     * @param file           选择的文件
+     * @return 读取到的ui类
+     * @throws IOException            文件出错
+     * @throws ClassNotFoundException 无法读取
+     */
+    public Map<TracingProcess, GraphHelper> readFile(MainController mainController, File file) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            PictureScene pictureScene = (PictureScene) ois.readObject();
+            return ioHelper.swapToUI(mainController, pictureScene);
+        }
     }
 }

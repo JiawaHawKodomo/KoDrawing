@@ -3,7 +3,9 @@ package bl.io;
 import bl.io.io_model.PictureScene;
 import bl.io.io_model.RealTrace;
 import bl.model.graph.Graph;
+import ui.MainController;
 import ui.graph.GraphHelper;
+import ui.graph.GraphHelperFactory;
 import ui.graph.TracingProcess;
 
 import java.util.Map;
@@ -25,9 +27,19 @@ public class IOHelper {
     }
 
 
-
-    public Map<TracingProcess, GraphHelper> swapToUI() {
-        return null;
+    /**
+     * 转换为ui对象
+     *
+     * @param mainController mainController
+     * @param pictureScene   持久化类
+     * @return
+     */
+    public Map<TracingProcess, GraphHelper> swapToUI(MainController mainController, PictureScene pictureScene) {
+        return pictureScene.getMap().entrySet().stream().collect(Collectors.toMap(e -> {
+            TracingProcess tracingProcess = new TracingProcess();
+            tracingProcess.setTrace(e.getKey().getPoints());
+            return tracingProcess;
+        }, e -> GraphHelperFactory.newGraphHelper(mainController, e.getValue())));
     }
 
     /**
@@ -36,7 +48,7 @@ public class IOHelper {
      * @param map map
      * @return 持久化类
      */
-    private PictureScene swapToSerilizationClass(Map<TracingProcess, GraphHelper> map) {
+    public PictureScene swapToSerilizationClass(Map<TracingProcess, GraphHelper> map) {
         PictureScene pictureScene = new PictureScene();
         Map<RealTrace, Graph> resultMap = map.entrySet().stream().collect(Collectors.toMap(e -> {
             RealTrace realTrace = new RealTrace();

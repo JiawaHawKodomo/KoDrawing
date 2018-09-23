@@ -16,7 +16,7 @@ public class PictureScene implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    Map<RealTrace, Graph> map = new TreeMap<>();
+    private Map<RealTrace, Graph> map = new TreeMap<>();
 
     public PictureScene() {
     }
